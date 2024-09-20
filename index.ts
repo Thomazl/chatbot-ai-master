@@ -1,10 +1,16 @@
 import express from "express";
+import cors from "cors";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 
 const app = express();
 app.use(express.json());
 const port = 3000;
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Permite requisições dessa origem específica
+  methods: 'GET,POST',             // Métodos permitidos
+}));
 
 async function CallTheGemini(pergunta: string) {
   const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY!);
@@ -16,7 +22,7 @@ async function CallTheGemini(pergunta: string) {
   const prompt = pergunta;
 
   const result = await model.generateContent(prompt);
-  console.log(result.response);
+  console.log(result.response.text());
 
   return result.response.text();
 }
